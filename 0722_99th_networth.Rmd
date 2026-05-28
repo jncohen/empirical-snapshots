@@ -1,0 +1,316 @@
+---
+title: "Wealth Accumulation After the 2008 Crisis: One Percent vs. Median Households"
+author: "Joseph Nathan Cohen"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+
+snapshot: true
+snapshot_label: "Empirical Snapshot"
+snapshot_feature: "figures/0722_99th_networth.png"
+
+snapshot_byline_name: "Joseph Nathan Cohen"
+snapshot_byline_title: "Associate Professor of Sociology"
+snapshot_byline_affiliation: "Queens College, City University of New York"
+snapshot_byline_link: "https://jncohen.commons.gc.cuny.edu"
+snapshot_byline_bio: "Quantitative Sociologist: Organizations & Economy"
+snapshot_author_image: "images/JoeH1.png"
+
+snapshot_switch_section: 3
+snapshot_license: "cc-by-nc-sa-4.0"
+snapshot_data_note: "Data: Survey of Consumer Finances. /nFor info: jncohen.commons.gc.cuny.edu/scf"
+snapshot_code_url: "github.com/jncohen/FILL"
+
+abstract: |
+  Both the median and 99th percentile lost wealth after the 2008 crisis. Both recovered, but the 99th percentile recovered faster.
+
+fontset: hfwg
+accent: 0066CC
+fontpath: fonts/
+numbersections: false
+doublespace: false
+linenumbers: false
+maincolumns: 1
+
+output:
+  hfwgtex::snapshot_pdf:
+    template: hfwgtemplate.tex
+    latex_engine: xelatex
+    keep_tex: false
+    wordpress: html
+    wordpress_assets: false
+    wordpress_checklist: false
+---
+
+```{r setup, include = F}
+
+rm(list=ls())
+gc()
+
+hfwgtex::hfwg_use(overwrite = T)
+
+library(scf)
+library(scales)
+library(ggplot2)
+
+```
+
+```{r lede calcs, include = F}
+
+# Load Data Objects
+scf2022 <- scf_load(2022)
+scf2007 <- scf_load(2007)
+
+# Median Net Worth Calculations
+nw22_p50 <- scf_percentile(scf2022, ~networth, q=0.50, method = "stack")
+nw07_p50 <- scf_percentile(scf2007, ~networth, q=0.50, method = "stack")
+
+# 99th Percentile Net Worth Calculations
+nw22_p99 <- scf_percentile(scf2022, ~networth, q=0.99, method = "stack")
+nw07_p99 <- scf_percentile(scf2007, ~networth, q=0.99, method = "stack")
+ 
+# Clean Up
+rm(scf2007)
+rm(scf2022)
+gc()
+
+# Ratios
+ratio22 <- nw22_p99$results$estimate / nw22_p50$results$estimate
+ratio07 <- nw07_p99$results$estimate / nw07_p50$results$estimate
+
+# How much wealthier?
+ratio99 <- (nw22_p99$results$estimate - nw07_p99$results$estimate) / nw07_p99$results$estimate
+ratio50 <- (nw22_p50$results$estimate - nw07_p50$results$estimate)/ nw07_p50$results$estimate
+
+
+```
+
+\n
+Between 2007 and 2022, household net worth at the 99th percentile rose from \$12.0 million to \$13.6 million. By comparison, median household net worth rose from `r dollar(nw07_p50$results$estimate)` to `r dollar(nw22_p50$results$estimate)`. By 2022, the 99th percentile was `r percent(ratio99, accuracy = 1)` higher than in 2007, compared with `r percent(ratio50, accuracy = 1)` at the median. The main difference was timing: top-end wealth recovered earlier, while median wealth took longer to regain its pre-crisis level.
+
+# Context
+
+The 2008 financial crisis gave new force to the view that American economic policy favored elites at the expense of regular households. Anti-elite political movements like "Occupy Wall Street" drew national attention. Books such as Hacker and Pierson’s (2010) *Winner-Take-All Politics*, Joseph Stiglitz’s (2013) *The Price of Inequality*, and Thomas Piketty’s (2014) *Capital in the Twenty-First Century* helped make elite influence and top-end inequality topics of intense public debate. The "One Percent” had become a widely recognized shorthand for concentrated economic advantage, and there was widespread concern that government policy had catered to them at the expense of the general public.
+
+Similar discussions are regaining currency today in New York City politics around housing affordability, taxing wealthier households, or financing new social programs and forms of economic redistribution. In this snapshot, we examine how wealth levels changed for both the One Percent and the median household since the Financial Crisis.  We ask whether the wealth accumulation differed between the two groups. 
+
+# Findings
+
+```{r findings, include = F}
+
+# Load Survey Objects
+scf2010 <- scf_load(2010)
+nw10_p50 <- scf_percentile(scf2010, ~networth, q=0.50, method = "stack")
+nw10_p99 <- scf_percentile(scf2010, ~networth, q=0.99, method = "stack")
+rm(scf2010)
+gc()
+
+scf2013 <- scf_load(2013)
+nw13_p50 <- scf_percentile(scf2013, ~networth, q=0.50, method = "stack")
+nw13_p99 <- scf_percentile(scf2013, ~networth, q=0.99, method = "stack")
+rm(scf2013)
+gc()
+
+scf2016 <- scf_load(2016)
+nw16_p50 <- scf_percentile(scf2016, ~networth, q=0.50, method = "stack")
+nw16_p99 <- scf_percentile(scf2016, ~networth, q=0.99, method = "stack")
+rm(scf2016)
+gc()
+
+scf2019 <- scf_load(2019)
+nw19_p50 <- scf_percentile(scf2019, ~networth, q=0.50, method = "stack")
+nw19_p99 <- scf_percentile(scf2019, ~networth, q=0.99, method = "stack")
+rm(scf2019)
+gc()
+
+# Compose Data Table
+table <- data.frame(
+  year = c(2007, 2010, 2013, 2016, 2019, 2022),
+  p50 = c(nw07_p50$results$estimate, nw10_p50$results$estimate, 
+          nw13_p50$results$estimate, nw16_p50$results$estimate, 
+          nw19_p50$results$estimate, nw22_p50$results$estimate),
+  p99 = c(nw07_p99$results$estimate, nw10_p99$results$estimate, 
+          nw13_p99$results$estimate, nw16_p99$results$estimate, 
+          nw19_p99$results$estimate, nw22_p99$results$estimate)
+)
+
+# Index to 2007
+table$p50_07 <- table$p50 / table$p50[table$year == 2007] * 100
+table$p99_07 <- table$p99 / table$p99[table$year == 2007] * 100
+```
+
+```{r figure, include = F}
+
+# Defensive ordering
+table <- table[order(table$year), ]
+
+# Defensive indexing
+table$p50_07 <- 100 * table$p50 / table$p50[table$year == 2007]
+table$p99_07 <- 100 * table$p99 / table$p99[table$year == 2007]
+
+# Long format, base R
+plot_df <- data.frame(
+  year = c(table$year, table$year),
+  value = c(table$p50_07, table$p99_07),
+  percentile = factor(
+    rep(c("Median", "99th percentile"), each = nrow(table)),
+    levels = c("Median", "99th percentile")
+  )
+)
+
+# Axis limits with padding so all points are inside the panel
+y_floor <- floor((min(plot_df$value, na.rm = TRUE) - 4) / 10) * 10
+y_ceil  <- ceiling((max(plot_df$value, na.rm = TRUE) + 4) / 10) * 10
+
+major_y <- seq(y_floor, y_ceil, by = 10)
+minor_y <- seq(y_floor + 5, y_ceil - 5, by = 10)
+
+fig <- ggplot(plot_df, aes(x = year, y = value)) +
+  
+  # Intermediate y-axis reference lines first, so data draw over them
+  geom_hline(
+    yintercept = minor_y,
+    linewidth = 0.20,
+    color = "gray92",
+    linetype = "dotted"
+  ) +
+  geom_hline(
+    yintercept = major_y,
+    linewidth = 0.25,
+    color = "gray86"
+  ) +
+  
+  # Baseline: indexed value in 2007
+  geom_hline(
+    yintercept = 100,
+    linewidth = 0.55,
+    color = "gray45"
+  ) +
+  
+  # Lines and points
+  geom_line(
+    aes(color = percentile, linetype = percentile),
+    linewidth = 0.72,
+    lineend = "round"
+  ) +
+  geom_point(
+    aes(color = percentile),
+    size = 2.35
+  ) +
+  
+  # Color + pattern redundancy
+  scale_color_manual(
+    values = c(
+      "Median" = "#0066CC",
+      "99th percentile" = "#CC3311"
+    )
+  ) +
+  scale_linetype_manual(
+    values = c(
+      "Median" = "longdash",
+      "99th percentile" = "solid"
+    )
+  ) +
+  
+  # Axes
+  scale_x_continuous(
+    breaks = table$year,
+    expand = expansion(mult = c(0.02, 0.03))
+  ) +
+  scale_y_continuous(
+    limits = c(y_floor, y_ceil),
+    breaks = major_y,
+    minor_breaks = NULL,
+    expand = expansion(mult = c(0, 0))
+  ) +
+  
+  # Text
+  labs(
+    title = "Top-End Wealth Recovered Faster After the Financial Crisis",
+    subtitle = "Household net worth indexed to 2007 = 100",
+    x = "Year",
+    y = "Net Worth (2007 = 100)",
+    color = NULL,
+    linetype = NULL,
+    caption = "Data source: Federal Reserve Survey of Consumer Finances. License: CC BY-NC 4.0."
+  ) +
+  
+  # Theme
+  theme_minimal(base_size = 11) +
+  theme(
+    # Text hierarchy
+    plot.title = element_text(
+      size = 13,
+      face = "bold",
+      margin = margin(b = 3)
+    ),
+    plot.subtitle = element_text(
+      size = 11,
+      margin = margin(b = 10)
+    ),
+    axis.title = element_text(
+      size = 11,
+      face = "bold"
+    ),
+    axis.text = element_text(
+      size = 11
+    ),
+    axis.title.x = element_text(
+      margin = margin(t = 10)
+    ),
+    axis.title.y = element_text(
+      margin = margin(r = 10)
+    ),
+    
+    # Legend
+    legend.position = "bottom",
+    legend.direction = "horizontal",
+    legend.text = element_text(size = 11),
+    legend.margin = margin(t = 2),
+    legend.box.margin = margin(t = 2),
+    
+    # Caption / source note
+    plot.caption = element_text(
+      size = 8.5,
+      color = "gray35",
+      hjust = 0,
+      margin = margin(t = 10)
+    ),
+    
+    # Remove ggplot grid because custom reference lines are used
+    panel.grid = element_blank(),
+    
+    # Clean panel
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    
+    # Better breathing room
+    plot.margin = margin(t = 12, r = 14, b = 12, l = 12)
+  )
+
+fig
+
+fig_width  <- 6
+fig_height <- 8
+fig_dpi    <- 180
+
+
+ggsave(
+  "figures/0722_99th_networth.png",
+  fig,
+  width = fig_width,
+  height = fig_height,
+  dpi = fig_dpi
+)
+
+```
+
+The figure to the right depicts changes in median and top percentile household net worth across each survey year between 2007 and 2022. Each series is indexed to its own 2007 level, which is set to 100. Three observations stand out:
+
+**Top and Median Wealth Moved Together.** Both median wealth and the 99th-percentile threshold fell after the financial crisis, and both required years-long recoveries. The pattern was not one in which top-end wealth rose while median wealth fell.
+
+**Top-End Wealth Recovered Faster.** The 99th-percentile threshold recovered more quickly than median household net worth. Median wealth remained below its 2007 level for longer, returning to its pre-crisis level only later in the recovery period.
+
+**Both Ended Above Their 2007 Levels.** By 2022, the 99th-percentile threshold was about `r percent(ratio99, accuracy = 1)` higher than in 2007, while median household net worth was about `r percent(ratio50, accuracy = 1)` higher. 
+
+# Implication
+
+Both the 99th-percentile threshold and median household net worth fell after the financial crisis and eventually exceeded their 2007 levels by 2022. Their trajectories moved in the same broad direction, but not at the same pace. Top-percentile wealth recovered faster, while median household wealth took longer to regain its pre-crisis level. The result is not a simple story of top-end gains alongside median decline, but rather one of shared recovery with unequal timing.
