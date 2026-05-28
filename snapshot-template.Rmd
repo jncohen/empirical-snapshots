@@ -1,0 +1,53 @@
+---
+title: "Finding-Forward Headline with a Number or Clear Comparison"
+author: "Your Name"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+
+snapshot: true
+snapshot_label: "Empirical Snapshot"
+snapshot_feature: "figures/placeholder-image.png"
+snapshot_feature_height: "2.95in"
+snapshot_feature_caption: "One-sentence caption naming the measure, population, data source, and year."
+# Build featured visualizations at 1080 x 1440 px (3:4 portrait).
+
+snapshot_byline_name: "Joseph Cohen"
+snapshot_byline_title: "Associate Professor of Sociology"
+snapshot_byline_affiliation: "Queens College, City Univ. of New York"
+snapshot_byline_link: "https://jncohen.commons.gc.cuny.edu"
+snapshot_byline_bio: "Researches household finances"
+# snapshot_author_image: "images/author.png"
+
+abstract: |
+  Write the lead in one short paragraph: the finding, its magnitude, who is affected, and why it matters.
+
+fontset: hfwg
+accent: 0066CC
+fontpath: fonts/
+numbersections: false
+doublespace: false
+linenumbers: false
+maincolumns: 1
+
+output:
+  hfwgtex::snapshot_pdf:
+    template: hfwgtemplate.tex
+    latex_engine: xelatex
+    keep_tex: true
+    wordpress: html
+    wordpress_assets: true
+    wordpress_checklist: true
+---
+
+<!-- Snapshots are one-page public documents. Keep the writing tight, plain, and finding-centered. No subtitle, no methods section, no abstract heading. -->
+
+# Context
+
+<!-- 150-200 words. Name the social or institutional context that makes this empirical finding relevant. -->
+
+# Finding
+
+<!-- 400-500 words. Explain the main result with concrete numbers and one visual. The featured visualization is set in YAML. -->
+
+# Implication
+
+<!-- 150-200 words. State what the finding suggests for practice, policy, or future research without overclaiming. -->

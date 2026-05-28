@@ -1,0 +1,126 @@
+---
+title: "Interracial Marriage Has Become Far More Common"
+author: "Joseph Nathan Cohen"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+
+snapshot: true
+snapshot_label: "Empirical Snapshot"
+snapshot_feature: "figures/0722_99th_networth.png"
+
+snapshot_byline_name: "Joseph Nathan Cohen"
+snapshot_byline_title: "Associate Professor of Sociology"
+snapshot_byline_affiliation: "Queens College, City University of New York"
+snapshot_byline_link: "https://jncohen.commons.gc.cuny.edu"
+snapshot_byline_bio: "Quantitative Sociologist: Organizations & Economy"
+snapshot_author_image: "images/JoeH1.png"
+
+snapshot_switch_section: 3
+snapshot_footer_label: "CC BY-NC-SA 4.0"
+
+abstract: |
+  Interracial household pairing has become substantially more common over time, though it remains a minority pattern among partnered households.
+
+fontset: hfwg
+accent: 0066CC
+fontpath: fonts/
+numbersections: false
+doublespace: false
+linenumbers: false
+maincolumns: 1
+
+output:
+  hfwgtex::snapshot_pdf:
+    template: hfwgtemplate.tex
+    latex_engine: xelatex
+    keep_tex: false
+    wordpress: html
+    wordpress_assets: false
+    wordpress_checklist: false
+---
+
+```{r setup, include = F}
+
+rm(list=ls())
+gc()
+
+hfwgtex::hfwg_use(overwrite = T)
+
+library(scf)
+library(scales)
+library(ggplot2)
+
+```
+
+```{r lede calcs, include = F}
+
+for (i in seq(1989, 2022, 3)){
+  
+  data <- scf_load(i)
+  data0 <- data
+  
+  data <- scf_subset(data, x8023 %in% c(1,2))
+  
+  data <- scf_update(data,
+                     p1_sex = x8021,
+                     p2_sex = x103,
+                     race1 = x6809,
+                     race2 = x6810)
+ 
+  # NOTE: Race variable appears to have changed over time.
+  # Next step is this
+  
+  # Subset Mixed Sex for Calculation Purposes
+  data <- scf_update(data,
+                     same_sex = p1_sex == p2_sex)
+  
+  samesex <- scf_freq(data, ~same_sex)$results$proportion[2]
+  assign(paste0("samesex_", i), samesex)
+  
+  data1 <- data
+  data <- scf_subset(data, same_sex == FALSE)
+   
+  data <- scf_update(data,
+                     race_male = ifelse(p1_sex == 1, race1,
+                                        ifelse(p2_sex == 1, race2, NA)),
+                     race_female = ifelse(p1_sex == 2, race1,
+                                          ifelse(p2_sex == 2), race2, NA))
+  
+  data <- scf_update(data,
+                     exogamous = race_male != race_female)
+
+  
+}
+
+
+```
+
+
+
+# Context
+
+America has a long history of racial segregation and conflict. It has also wrestled with a long-term effort to achieve racial integration.  Part of this has been the legalization and social acceptance of interracial marriage.  How much progress has occurred on this front?
+
+The incidence of interracial unions is one useful indicator of the degree to which racial integration has progressed.  It is difficult to imagine a more fundamental or socially consequential form of racial integration than in pairing choices. The choice of pairing with someone has wide-ranging consequences, and the choice to pair across racial boundaries is a clear revealed preference for deprioritizing racial identity as a relevant criterion for mate selection. When such unions produce offspring, they contribute a new generation of Americans with mixed racial heritage, for whom there is little benefit and much threat to conflicts among racial purists.
+
+Opinions differ on the progress of this social project.  This analysis capitalizes on the *Survey of Consumer Finances*, a high-quality national survey whose data includes information on individual household members' races. While racial integration is far more complicated than the incidence of interracial marriage, the analysis offers a data-derived sense of its general progress and trajectory.
+
+
+# Findings
+
+Our focus is on married or cohabiting households.  
+
+```{r findings, include = F}
+
+
+```
+
+```{r figure, include = F}
+
+
+
+```
+
+
+
+# Implication
+

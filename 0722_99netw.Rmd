@@ -17,7 +17,7 @@ snapshot_author_image: "images/JoeH1.png"
 snapshot_switch_section: 3
 snapshot_license: "cc-by-nc-sa-4.0"
 snapshot_data_note: "Data: Survey of Consumer Finances. /nFor info: jncohen.commons.gc.cuny.edu/scf"
-snapshot_code_url: "github.com/jncohen/FILL"
+snapshot_code_url: "github.com/jncohen/0722_99netw.Rmd"
 
 abstract: |
   Both the median and 99th percentile lost wealth after the 2008 crisis. Both recovered, but the 99th percentile recovered faster.
@@ -83,7 +83,7 @@ ratio50 <- (nw22_p50$results$estimate - nw07_p50$results$estimate)/ nw07_p50$res
 
 ```
 
-\n
+
 Between 2007 and 2022, household net worth at the 99th percentile rose from \$12.0 million to \$13.6 million. By comparison, median household net worth rose from `r dollar(nw07_p50$results$estimate)` to `r dollar(nw22_p50$results$estimate)`. By 2022, the 99th percentile was `r percent(ratio99, accuracy = 1)` higher than in 2007, compared with `r percent(ratio50, accuracy = 1)` at the median. The main difference was timing: top-end wealth recovered earlier, while median wealth took longer to regain its pre-crisis level.
 
 # Context

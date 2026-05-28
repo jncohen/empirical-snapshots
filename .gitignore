@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+scf-snapshots.Rproj
+*.rds
+fonts
+default.csl
+*.tex
+*.html
+*.txt
+*.pdf
