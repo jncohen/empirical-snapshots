@@ -36,6 +36,7 @@
 \definecolor{hflbg}{HTML}{EFEDE6}         % warm bone paper
 \definecolor{hflline}{HTML}{15140F}
 \definecolor{hfllinesoft}{HTML}{D3CFC3}
+\definecolor{hflfoot}{HTML}{56544B}       % footer text: darker than ink-3 for print
 
 %%--- Faces ---------------------------------------------------------
 \def\hflfontsdir{$if(fontpath)$$fontpath$$else$fonts/$endif$}
@@ -69,10 +70,10 @@
 %%--- Type scale (YAML-overridable; defaults hold a full snapshot on one page)
 \def\hfltitlesize{$if(snapshot_title_size)$$snapshot_title_size$$else$21pt$endif$}
 \def\hfltitleskip{$if(snapshot_title_leading)$$snapshot_title_leading$$else$21.4pt$endif$}
-\def\hflledesize{$if(snapshot_lede_size)$$snapshot_lede_size$$else$8.4pt$endif$}
-\def\hflledeskip{$if(snapshot_lede_leading)$$snapshot_lede_leading$$else$11.8pt$endif$}
-\def\hflbodysize{$if(snapshot_body_size)$$snapshot_body_size$$else$8.0pt$endif$}
-\def\hflbodyskip{$if(snapshot_body_leading)$$snapshot_body_leading$$else$11.2pt$endif$}
+\def\hflledesize{$if(snapshot_lede_size)$$snapshot_lede_size$$else$8.8pt$endif$}
+\def\hflledeskip{$if(snapshot_lede_leading)$$snapshot_lede_leading$$else$12.3pt$endif$}
+\def\hflbodysize{$if(snapshot_body_size)$$snapshot_body_size$$else$8.4pt$endif$}
+\def\hflbodyskip{$if(snapshot_body_leading)$$snapshot_body_leading$$else$11.7pt$endif$}
 \def\hflkickersize{$if(snapshot_kicker_size)$$snapshot_kicker_size$$else$6.4pt$endif$}
 \def\hflkickerskip{8.5pt}
 \def\hflmetasize{6.4pt}\def\hflmetaskip{8.4pt}
@@ -94,11 +95,15 @@
 \newlength{\hflboxlift}\setlength{\hflboxlift}{0.268\hflboxsize}
 \def\hflgapLogoTitle{4.9pt}  %% wordmark -> title  (no rule between)
 \def\hflgapTitleRule{-4.7pt}  %% title -> closing rule
-\def\hflgapRuleBody{1.25pt}    %% closing rule -> body
+\def\hflgapRuleBody{11.75pt}    %% closing rule -> body
 \def\hflgapFootRule{-10.05pt}  %% footer rule -> footer text
 \def\hflavatarcol{0.26}       %% author portrait: share of the column width
 \def\hflauthorcol{0.68}       %% author text block: share of the column width
 \def\hflgapAvatarText{9pt}    %% portrait -> author text
+%% The author box is pinned to the foot of column 2 by a \vfill, so it sits in
+%% the bottom corner whatever the body length. These fix its two margins.
+\def\hflgapAboveAuthor{0.12cm} %% rule -> "About the author"
+\def\hflgapBelowAuthor{0.0cm} %% portrait bottom -> body bottom
 
 %%--- Licence map ----------------------------------------------------
 $if(snapshot_license_text)$
@@ -170,7 +175,7 @@ $endfor$
     \vspace{\hflgapFootRule}%
     \begin{minipage}[t]{0.62\textwidth}%
     \vspace{0pt}%
-    {\hflmonot\fontsize{6pt}{8.4pt}\selectfont\color{hflinkthree}%
+    {\hflmonot\fontsize{6pt}{8.4pt}\selectfont\color{hflfoot}%
     \MakeUppercase{$if(snapshot_data_note)$$snapshot_data_note$$else$Data: Survey of Consumer Finances \textperiodcentered{} hhfinance.commons.gc.cuny.edu$endif$}\par
     $if(snapshot_code_url)$\MakeUppercase{Code: $snapshot_code_url$}$endif$%
     \MakeUppercase{ \textperiodcentered{} License \hfllicense}\par}%
@@ -279,9 +284,11 @@ $body$
 
 %%--- Author block ---------------------------------------------------
 \switchcolumn[1]
-\par\vspace{8pt}
+%% \vfill drives the block to the foot of the column: the box lands in the
+%% bottom corner regardless of how long the article runs.
+\vfill
 \noindent\textcolor{hflline}{\rule{\linewidth}{1.1pt}}\par
-\vspace{6pt}
+\vspace{\hflgapAboveAuthor}
 \noindent{\hflmonot\fontsize{6.2pt}{8pt}\selectfont\bfseries\color{hflaccent}%
 \MakeUppercase{+\hspace{3pt}About the author}}\par
 \vspace{5pt}
@@ -309,5 +316,6 @@ $if(snapshot_byline_link)$
 {\hflmono\fontsize{6.8pt}{9pt}\selectfont\color{hflaccent}$snapshot_byline_link$\par}
 $endif$
 \end{minipage}\par
+\vspace*{\hflgapBelowAuthor}
 \end{paracol}
 \end{document}

@@ -17,7 +17,7 @@ snapshot_feature_caption: "Net worth indexed to 2007 (=100). SCF 1989--2022."
 # snapshot_feature_height: "4.3in"   # default; lower it if the sheet spills
 
 snapshot_byline_name: "Joseph Nathan Cohen"
-snapshot_byline_title: "Associate Professor of Sociology"
+snapshot_byline_title: "Associate Professor of Sociology: Economic Sociology, Organizations & Methodology"
 snapshot_byline_link: "jncohen.commons.gc.cuny.edu"
 snapshot_author_image: "images/JoeH1.png"
 # byline_affiliation / byline_bio omitted: the author box reads
@@ -25,7 +25,7 @@ snapshot_author_image: "images/JoeH1.png"
 
 snapshot_switch_section: 3
 snapshot_license: "cc-by-nc-sa-4.0"
-snapshot_data_note: "Data: Survey of Consumer Finances <jncohen.commons.gc.cuny.edu/scf>"
+snapshot_data_note: "Data: Survey of Consumer Finances. See: <jncohen.commons.gc.cuny.edu/scf>"
 snapshot_code_url: "github.com/jncohen/0722_99netw.Rmd"
 
 abstract: |
