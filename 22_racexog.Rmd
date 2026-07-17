@@ -1,0 +1,115 @@
+---
+title: "Prevalence of Interracial Marriage in 2022"
+author: "Joseph Nathan Cohen"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+
+snapshot: true
+snapshot_label: "Empirical Snapshot"
+snapshot_feature: "figures/0722_99th_networth.png"
+
+snapshot_byline_name: "Joseph Nathan Cohen"
+snapshot_byline_title: "Associate Professor of Sociology"
+snapshot_byline_affiliation: "Queens College, City University of New York"
+snapshot_byline_link: "https://jncohen.commons.gc.cuny.edu"
+snapshot_byline_bio: "Quantitative Sociologist: Organizations & Economy"
+snapshot_author_image: "images/JoeH1.png"
+
+snapshot_switch_section: 3
+snapshot_license: "cc-by-nc-sa-4.0"
+snapshot_data_note: "Data: Survey of Consumer Finances. \nFor info: jncohen.commons.gc.cuny.edu/scf"
+snapshot_code_url: "github.com/jncohen/8922_racexog.Rmd"
+
+abstract: |
+  Interracial household pairing has become substantially more common over time, though it remains a minority pattern among partnered households.
+
+# fontset/accent unset on purpose: the snapshot layout supplies the HFL
+# faces and defaults the accent to vermilion E5402A.
+fontpath: fonts/
+numbersections: false
+doublespace: false
+linenumbers: false
+maincolumns: 1
+
+output:
+  rmarkdown::pdf_document:
+    template: snapshots.tex
+    latex_engine: xelatex
+    keep_tex: true
+    keep_md: true        # .knit.md feeds the WordPress companion (see render-snapshot.R)
+---
+
+```{r setup, include = F}
+
+rm(list=ls())
+gc()
+
+# No hfwgtex. The snapshot is standalone: snapshots.tex + fonts/ + snapshots.bib
+# all live in this folder and are the only things the layout needs.
+
+library(scf)
+library(scales)
+library(ggplot2)
+
+```
+
+```{r lede calcs, include = F}
+
+scf2022 <- scf_load(2022)
+
+data <- scf2022
+  
+# Filter for Married (1) or Living with Partner (2)
+# Partner in primary econ unit with shared finances
+data <- scf_subset(data, x8023 %in% c(1, 2) & x7020 == 2)
+
+# Sex and race variables
+# Note we are focusing on first-stated race of each person
+data <- scf_update(data,
+                   p1_sex = x8021,
+                   p2_sex = x103,
+                   race1 = x6809,
+                   race2 = x8049,
+                   same_sex = p1_sex == p2_sex)
+
+# Prevalence of same-sex couples  
+samesex_tab <- scf_freq(data, ~same_sex)
+
+# Subset to mixed-sex
+data0 <- data
+data <- scf_subset(data, same_sex == FALSE)
+   
+# Because of SCF data-swapping rules, p1 is ALWAYS the male in mixed-sex couples
+data <- scf_update(data,
+                   race_male = race1,
+                   race_female = race2,
+                   exogamous = race_male != race_female)
+
+
+
+```
+
+
+
+# Context
+
+
+
+# Findings
+
+Our focus is on married or cohabiting households.  
+
+```{r findings, include = F}
+
+
+```
+
+```{r figure, include = F}
+
+
+
+```
+
+
+
+# Implication
+

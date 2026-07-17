@@ -1,12 +1,39 @@
+# --- R session cruft -------------------------------------------------
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 scf-snapshots.Rproj
+
+# --- Data ------------------------------------------------------------
+# SCF .rds files live outside the repo: Google Drive/Documents/Data/scf
 *.rds
-fonts
-default.csl
-*.tex
-*.html
-*.txt
+
+# --- Generated output ------------------------------------------------
 *.pdf
+*.html
+*.log
+*.aux
+*.out
+*.knit.md
+*.utf8.md
+
+# knitr leaves a .tex behind when keep_tex: true -- ignore those, but the
+# template itself is SOURCE and must be tracked.
+*.tex
+!snapshots.tex
+
+# --- Tracked on purpose ----------------------------------------------
+# The snapshot layout is standalone: it needs the HFL faces and the CSL
+# alongside snapshots.tex, so they belong in the repo. The fonts are
+# SIL OFL (Bricolage Grotesque, Archivo, Spline Sans Mono) and the OFL
+# text must travel with them.
+!fonts/
+!fonts/*.ttf
+!fonts/OFL-*.txt
+!default.csl
+!snapshots.bib
+!render-snapshot.R
+
+# Reference sheet + its source, kept so the design has a known-good baseline
+!snapshot-hfl-sample.md

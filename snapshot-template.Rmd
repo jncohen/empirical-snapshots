@@ -1,44 +1,80 @@
 ---
 title: "Finding-Forward Headline with a Number or Clear Comparison"
 author: "Your Name"
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
+date: "`r format(Sys.Date(), '%d %b %Y')`"
 
 snapshot: true
-snapshot_label: "Empirical Snapshot"
-snapshot_feature: "figures/placeholder-image.png"
-snapshot_feature_height: "2.95in"
-snapshot_feature_caption: "One-sentence caption naming the measure, population, data source, and year."
-# Build featured visualizations at 1080 x 1440 px (3:4 portrait).
 
+# --- Series identity (drives the utility bar across the top) ---
+snapshot_label: "Empirical Snapshot"
+snapshot_number: "000"
+snapshot_topic: "Topic"
+snapshot_util_left: "Queens College · CUNY"
+# snapshot_util_right: "SCF 2022"   # optional; adds "· SCF 2022" at far right
+
+# --- Featured figure (fills the right column) ---
+snapshot_feature: "figures/placeholder-image.png"
+snapshot_feature_label: "Fig. 1"
+snapshot_feature_caption: "One brief line: measure, population, source, year."
+# snapshot_feature_height: "4.3in"   # default cap; lower it if the sheet spills
+#
+# The plate is capped by height AND width, whichever binds first. Landscape
+# figures (~3:2) fill the column best; a 3:4 portrait renders at ~95% width.
+# Match the chart background to the sheet so it doesn't read as a white panel:
+#   theme(plot.background = element_rect(fill = "#EFEDE6", colour = NA))
+# Let snapshot_feature_caption do the labelling -- drop title/subtitle/caption
+# from the ggplot itself, or they duplicate the caption beneath the plate.
+
+# --- Author box ---
 snapshot_byline_name: "Joseph Cohen"
 snapshot_byline_title: "Associate Professor of Sociology"
-snapshot_byline_affiliation: "Queens College, City Univ. of New York"
-snapshot_byline_link: "https://jncohen.commons.gc.cuny.edu"
-snapshot_byline_bio: "Researches household finances"
-# snapshot_author_image: "images/author.png"
+snapshot_byline_link: "jncohen.commons.gc.cuny.edu"
+# snapshot_byline_affiliation: "Queens College, City Univ. of New York"
+# snapshot_byline_bio: "Researches household finances"
+# snapshot_author_image: "images/author.png"   # else a monogram disc is drawn
+# snapshot_author_initials: "JC"
+
+# --- Provenance (the footer) ---
+snapshot_switch_section: 3
+snapshot_license: "cc-by-nc-sa-4.0"
+snapshot_data_note: "Data: Survey of Consumer Finances <jncohen.commons.gc.cuny.edu/scf>"
+snapshot_code_url: "github.com/jncohen/your-file.Rmd"
+# snapshot_tiles: ["GitHub", "SCF", "CC BY-NC-SA"]
+
+# --- Masthead + type scale (all optional; defaults hold one page) ---
+# snapshot_wordmark_size: "15pt"   # the HF square follows automatically
+# snapshot_title_size: "21pt"
+# snapshot_lede_size: "8.4pt"
+# snapshot_body_size: "8.0pt"
+# snapshot_body_leading: "11.2pt"
 
 abstract: |
   Write the lead in one short paragraph: the finding, its magnitude, who is affected, and why it matters.
 
-fontset: hfwg
-accent: 0066CC
+# fontset/accent are intentionally unset: the snapshot layout supplies the HFL
+# faces (Bricolage / Archivo / Spline Sans Mono) and defaults the accent to
+# vermilion E5402A. Setting accent here would override it.
 fontpath: fonts/
 numbersections: false
 doublespace: false
 linenumbers: false
 maincolumns: 1
 
+# Standalone: needs only rmarkdown + pandoc + XeLaTeX + snapshots.tex + fonts/.
+# For the WordPress companion as well, use:  source("render-snapshot.R")
+#                                            render_snapshot("this-file.Rmd")
 output:
-  hfwgtex::snapshot_pdf:
-    template: hfwgtemplate.tex
+  rmarkdown::pdf_document:
+    template: snapshots.tex
     latex_engine: xelatex
     keep_tex: true
-    wordpress: html
-    wordpress_assets: true
-    wordpress_checklist: true
+    keep_md: true        # .knit.md feeds the WordPress companion
 ---
 
 <!-- Snapshots are one-page public documents. Keep the writing tight, plain, and finding-centered. No subtitle, no methods section, no abstract heading. -->
+
+<!-- Anything written here, above the first heading, becomes the opening
+     paragraph of column 1, directly under the lede. -->
 
 # Context
 
@@ -50,4 +86,8 @@ output:
 
 # Implication
 
-<!-- 150-200 words. State what the finding suggests for practice, policy, or future research without overclaiming. -->
+<!-- 150-200 words. State what the finding suggests for practice, policy, or future research without overclaiming.
+
+     Section 3 is where the body switches to column 2, under the figure --
+     that's snapshot_switch_section: 3 in the YAML. Keep three sections, or
+     move the switch if you change the structure. -->
