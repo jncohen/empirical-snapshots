@@ -1,0 +1,7 @@
+YEAR: 2026
+COPYRIGHT HOLDER: Joseph Nathan Cohen / Household Finance Lab, Queens College CUNY
+
+Bundled fonts (Archivo, Bricolage Grotesque, Spline Sans Mono) are licensed
+separately under the SIL Open Font License 1.1 -- see the OFL-*.txt files
+under inst/extdata/fonts/. The MIT license below applies to the R package
+code only.

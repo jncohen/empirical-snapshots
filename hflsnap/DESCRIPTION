@@ -1,0 +1,23 @@
+Package: hflsnap
+Type: Package
+Title: Household Finance Lab Empirical Snapshot Template
+Version: 0.1.0
+Authors@R: person("Joseph Nathan", "Cohen", email = "jncohen@qc.cuny.edu", role = c("aut", "cre"))
+Description: Ships the fonts, LaTeX template, citation style, and starter
+    R Markdown file used to produce Household Finance Lab (HFL) Empirical
+    Snapshots. hfl_use() copies these support files into a new project
+    folder; render_snapshot() knits the one-page PDF and its WordPress
+    companion HTML. This package supplies files and a thin rendering
+    wrapper only -- it does not define a custom rmarkdown output format,
+    so snapshot.Rmd files remain plain rmarkdown::pdf_document documents
+    that any collaborator can knit without the package installed, as
+    long as the copied support files stay in the project folder.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
+Imports:
+    rmarkdown,
+    tools
+Suggests:
+    tinytex
