@@ -1,10 +1,12 @@
-# HFL Empirical Snapshots — Writing and Production Guide
-
-> **This is the collaborator copy**, kept in the code repo for people who clone
-> it. The canonical version lives in the HFL memo library as
-> `Empirical Snapshots Writing Guide.md`; if the two disagree, that one governs.
-
 ---
+type: guidance
+date_created: 2026-05-12
+last_updated: 2026-08-17
+version: "3.4"
+canonical: true
+---
+
+> **This file is canonical.** The copy in `Research/hhfinance/snapshots/README.md` serves collaborators who clone the code repo; if the two disagree, this one governs. The former `Research/hhfinance/memos/Empirical Snapshot Style Guide.md` (v3.1) was merged into this file on 17 Aug 2026 and deleted.
 
 ## 1. Overview
 
@@ -16,7 +18,7 @@ The _Household Finance Lab_ (HFL) is a public research enterprise whose goal is
 
 _**The Snapshot Series.**_ The _Empirical Snapshot_ is the HFL's primary public-facing publication. Each installment presents a single, clearly bounded empirical finding from the data, written for an educated non-specialist reader.
 
-**Governing format constraint:** Submissions should fill and be confined to the model presented in [`0722_99netw.pdf`](0722_99netw.pdf), the reference PDF in this repo. The HTML version on the site will present [as presented here](https://hhfinance.commons.gc.cuny.edu/2026/07/12/wealth-after-the-crisis-one-percent-vs-median/).
+**Governing format constraint:** Submissions should fill and be confined to the model presented in this [[0722_99netw.pdf|example of PDF report]]. The HTML version on the site will present [as presented here](https://hhfinance.commons.gc.cuny.edu/2026/07/12/wealth-after-the-crisis-one-percent-vs-median/).
 
 **Before using Snapshot 001 as a template, read §9.** It has five specific content deviations from this guide's rules — copy its layout, not those five choices.
 
@@ -35,7 +37,7 @@ The snapshot uses a **two-column layout** within a one-page format:
 - **Full-width header zone:** Publication badge flush left + date flush right; headline below spanning full width; author name and institution below headline.
 - **Left column (text):** All prose components in sequence — deck, lead paragraph, Context, Findings, Implication, About the Author.
 - **Right column (figure):** One chart or visualization. The figure zone may begin as high as the lead paragraph and run through the footer — it is not required to start at the Findings section. Size it to fill the column without crowding the author box or footer.
-- **Full-width footer:** Rule above. Dataset name, reference page link and code URL flush left; the license tile flush right. The license appears once, in the tile — not on the left as well.
+- **Full-width footer:** License (CC BY-NC-SA 4.0) flush left; dataset name and reference page link flush right; rule above.
 
 The figure must not bleed into the text column. The text column carries all prose; the right column carries only the figure and its caption.
 
@@ -55,7 +57,7 @@ The figure must not bleed into the text column. The text column carries all pros
 |**Implication block**|75–100 words|Conditional implications; develops practical meaning|
 |**Total body**|~450–530 words|Constrained by one-page fit|
 
-Context's target was widened from an earlier draft (100–130) to match what actually holds a page: Snapshot 001's Context runs ~162 words and the page fits fine. The total-body ceiling is the binding constraint — hold Context, Findings, and Implication to it in combination, not each in isolation. `snapshot-template.Rmd`'s inline word-count comments match this table (as of the `hflsnap` 0.2.0 template) — if you copied a `.Rmd` from an older project, check its comments still say 130–165 / 150–175 / 75–100 before trusting them.
+Context's target was widened from an earlier draft (100–130) to match what actually holds a page: Snapshot 001's Context runs ~162 words and the page fits fine. The total-body ceiling is the binding constraint — hold Context, Findings, and Implication to it in combination, not each in isolation. `snapshot-template.Rmd`'s inline word-count comments match this table (as of the `hflsnap` 0.1.0 template) — if you copied a `.Rmd` from an older project, check its comments still say 130–165 / 150–175 / 75–100 before trusting them.
 
 The sequence is fixed. It follows the **inverted pyramid** (journalism) and **progressive disclosure** (instructional design): lead with the finding, then provide the stakes, then the evidence, then the inference. Do not reorder.
 
@@ -87,7 +89,7 @@ Either way, the resulting `.Rmd` is a plain `rmarkdown::pdf_document` — `hflsn
 
 ### 5.2 One-Time Setup
 
-`hflsnap` lives in the `hflsnap/` subdirectory of this repo (`github.com/jncohen/empirical-snapshots`), not as its own repo. Install it from there:
+`hflsnap` lives in the `hflsnap/` subdirectory of the snapshots repo (`github.com/jncohen/empirical-snapshots`), not as its own repo. Install it from there:
 
 ```r
 install.packages("devtools")     # if not already installed
@@ -96,13 +98,13 @@ devtools::install_github("jncohen/empirical-snapshots", subdir = "hflsnap")
 
 **Updating.** Re-running the same `install_github()` call always pulls whatever is on `main` — there's no version to bump on your end. If you want to pin to a specific commit or tag (e.g. after a breaking change to `hfl_use()`), install with `ref = "<commit-sha-or-tag>"` instead.
 
-**Offline / no GitHub access:** install from the tarball checked into the repo root instead:
+**Offline / no GitHub access:** install from the tarball checked into the root of that repo (`hflsnap_0.1.0.tar.gz`) instead:
 
 ```r
-devtools::install_local("hflsnap_0.2.0.tar.gz")
+devtools::install_local("hflsnap_0.1.0.tar.gz")
 ```
 
-This is a point-in-time snapshot of the package, not a substitute for pulling from GitHub — it won't include changes made after that tarball was committed. **Rebuild it (`R CMD build hflsnap`) whenever you change anything under `hflsnap/`**, or the offline path silently ships an older package than the source tree.
+This is a point-in-time snapshot of the package, not a substitute for pulling from GitHub — it won't include changes made after that tarball was committed.
 
 You also need:
 - **Pandoc**, bundled with RStudio.
@@ -171,20 +173,16 @@ snapshot_feature_caption: |
 # snapshot_feature_height: "4.3in"   # default cap; lower it if the sheet spills.
   # The plate is capped by height AND width, whichever binds first.
   # Landscape figures (~3:2) fill the column best; a 3:4 portrait
-  # renders at ~95% width. Do NOT hardcode a background — export both
-  # variants in one call with hflsnap::hfl_save_figure() and point this
-  # field at the bone file (see §7.4). Add hflsnap::hfl_watermark() as
-  # the LAST element of the ggplot chain (see §7.3). Let this caption
-  # field do the labelling — drop title/subtitle from the ggplot
-  # itself, or they duplicate the caption beneath the plate.
+  # renders at ~95% width. Match the chart background to the sheet
+  # color (#EFEDE6) so it doesn't read as a white panel. Let this
+  # caption field do the labelling — drop title/subtitle/caption from
+  # the ggplot itself, or they duplicate the caption beneath the plate.
 
 # ── ABOUT THE AUTHOR ────────────────────────────────────────────────
 snapshot_byline_name: "Your Full Name"
 snapshot_byline_title: "Research Associate, HFL"
-snapshot_byline_affiliation: "City University of New York, Queens College"
 snapshot_byline_link: "hhfinance.commons.gc.cuny.edu"
-  # title, affiliation and bio each render on their own line. Do not put
-  # a "\n" inside one field to fake a break — LaTeX reads it as a space.
+# snapshot_byline_affiliation: "Queens College, City Univ. of New York"
 # snapshot_byline_bio: "One sentence describing your research focus."
 # snapshot_author_image: "images/author.png"   # else a monogram disc is drawn
 
@@ -193,12 +191,8 @@ snapshot_switch_section: 3
   # The body section (1-indexed: Context=1, Finding=2, Implication=3)
   # at which the left column switches to run under the figure. Keep
   # three sections, or move this if you change the structure.
-snapshot_license: "cc-by-4.0"
-  # HFL house license. CC BY permits commercial reuse with attribution --
-  # deliberate, so journalists and other commercial outlets can republish
-  # without seeking permission. Do not narrow it without an editor's say-so.
-  # Other keys the template recognises: cc-by-sa-4.0, cc-by-nc-4.0,
-  # cc-by-nc-sa-4.0, cc0-1.0, all-rights-reserved, none
+snapshot_license: "cc-by-nc-sa-4.0"
+  # Other options: cc-by-4.0, cc0-1.0, all-rights-reserved
 snapshot_data_note: "Data: Survey of Consumer Finances <hhfinance.commons.gc.cuny.edu/scf>"
 snapshot_code_url: "github.com/jncohen/your-repo-name"
 
@@ -225,27 +219,12 @@ output:
   rmarkdown::pdf_document:
     template: snapshots.tex
     latex_engine: xelatex
-    keep_tex: true       # as shipped; leaves a .tex alongside the PDF for debugging
+    keep_tex: false
     keep_md: true        # required: .knit.md feeds the WordPress companion
 ---
 ```
 
 After the closing `---`, write the Snapshot body in standard R Markdown. Anything before the first `#` heading becomes the lead paragraph. Use `# Context`, `# Finding`, `# Implication` as section headings, and `**bold text**` for Finding block sub-headings.
-
-**Other fields `snapshots.tex` reads.** None are needed for a standard Snapshot; the defaults are what hold the page. Set one only for a specific reason.
-
-|Field|Default|What it does|
-|---|---|---|
-|`snapshot_tiles`|`["<license>"]`|The small tiles at the bottom right of the footer. Supply a list to override; doing so replaces the license tile rather than adding to it.|
-|`snapshot_license_text`|unset|Free-text license string, overriding `snapshot_license` entirely. Use only for a license the key list doesn't cover.|
-|`snapshot_author_initials`|`"JC"`|Initials in the monogram disc when no `snapshot_author_image` is given. **Set this if you are not Joe Cohen** — the default is hardcoded and will otherwise print the wrong initials.|
-|`snapshot_wordmark_size`|`15pt`|Masthead wordmark; the HF square scales with it.|
-|`snapshot_title_size`|`21pt`|Headline size.|
-|`snapshot_lede_size`|`8.8pt`|Deck size.|
-|`snapshot_body_size`|`8.4pt`|Body size.|
-|`snapshot_body_leading`|`11.7pt`|Body leading.|
-
-The five type-scale fields exist for one purpose: recovering a page that will not fit after the prose is already as tight as it should be. Reach for `snapshot_feature_height` first (§7.1), then cut words, and only then adjust type. `snapshot-template.Rmd` shows smaller sample values (8.4 / 8.0 / 11.2) in its commented block — those are illustrations of tightening, not the defaults.
 
 ### 5.5 Rendering
 
@@ -382,24 +361,11 @@ Do not overreach. Restrict to what the data can support.
 
 Controlled by the `snapshot_byline_*` YAML fields — not written in the body. Required; not optional. Renders at the bottom of the left column, above the footer rule.
 
-The block stacks one item per line, beside the portrait or monogram disc:
-
-```
-Joseph Nathan Cohen                  ← snapshot_byline_name
-Associate Professor of Sociology     ← snapshot_byline_title
-City University of New York,         ← snapshot_byline_affiliation
-  Queens College
-One sentence on research focus.      ← snapshot_byline_bio (optional)
-jncohen.commons.gc.cuny.edu          ← snapshot_byline_link
-```
-
-Give each element its own field. Do not embed a `\n` inside one field to force a break: YAML turns it into a real newline, but LaTeX reads a bare newline as a space, so the line silently runs on.
-
 The About the Author block is part of HFL's brand-building function. It converts a public-facing document into a credentialing artifact for the contributing researcher.
 
 ### 6.8 Footer
 
-Rendered automatically from YAML. `snapshot_data_note` and `snapshot_code_url` set the left block; `snapshot_license` sets the tile at bottom right, which is the only place the license is printed. Update `snapshot_data_note` for whichever dataset this Snapshot uses — do not leave it as the default placeholder.
+Controlled by `snapshot_license` and `snapshot_data_note` YAML fields. Rendered automatically. Update `snapshot_data_note` for whichever dataset this Snapshot uses — do not leave it as the default placeholder.
 
 ---
 
@@ -415,76 +381,10 @@ One figure per snapshot. The figure is specified in the `snapshot_feature` YAML 
 
 - **Finding title, not topic title.** The figure title states the finding. "Top-End Wealth Recovered Faster After the Financial Crisis" ✓. "Net Worth by Percentile, 2007–2022" ✗.
 - **Data-ink ratio.** Remove gridlines unless necessary for reading values; remove background colors; label data directly on the chart rather than using a legend wherever possible.
-- **Export two background variants.** The sheet wants bone, the web wants white — see §7.4. Use `hflsnap::hfl_save_figure()`; do not hand-pick one background and use it for both.
+- **Match the sheet background.** Set `theme(plot.background = element_rect(fill = "#EFEDE6", colour = NA))` so the figure doesn't read as a white panel dropped onto the page.
 - **Aspect ratio.** Landscape figures (~3:2) fill the column best; a 3:4 portrait renders at ~95% width. Design for whichever orientation the data calls for — do not force a landscape chart into a portrait canvas or vice versa.
 - **Readable at 50% zoom.** All labels and axis text must remain legible at half size, simulating how the figure appears embedded in a blog post.
-- **Caption.** Every figure carries a complete caption in `snapshot_feature_caption` including: (1) what is shown, (2) data source, (3) sample definition, (4) year(s), (5) relevant notes. Let the caption do the labelling — drop title/subtitle text from the ggplot itself, or they duplicate the caption beneath the plate.
-- **Attribution footer.** Every figure carries the HFL footer, added with `hflsnap::hfl_watermark()` — see §7.3. Do not hand-roll it as a `labs(caption =)` string.
-
-### 7.3 The Attribution Footer
-
-A figure that leaves the sheet — screenshotted, pasted into a deck, saved off the website — must still say where it came from. The WordPress companion does not embed the figure, so the image circulating publicly is the PNG you upload by hand; a footer drawn by the LaTeX template would not travel with it. The footer therefore has to be baked into the PNG, which means it belongs in the plotting code.
-
-Add it as the **last** element of the ggplot chain:
-
-```r
-library(hflsnap)
-library(ragg)
-
-fig <- ggplot(...) +
-  ...
-  theme_minimal(base_size = 11) +
-  theme(...) +
-  hfl_watermark()          # must follow theme(): it sets plot.caption
-```
-
-It renders two lines, flush left, in Spline Sans Mono at the sheet's footer grey:
-
-```
-HOUSEHOLD FINANCE LAB
-DATA: SURVEY OF CONSUMER FINANCES
-```
-
-Change the second line for any Snapshot not built on the SCF:
-
-```r
-hfl_watermark(data_note = "Data: American Community Survey")
-```
-
-**Two rules that are easy to get wrong.**
-
-- **Place it after any complete theme.** `hfl_watermark()` sets `plot.caption` and `plot.caption.position`. A complete theme that follows it (`theme_minimal()`, `theme_bw()`, and friends) resets both, and the footer silently reverts to panel-anchored and right-aligned — the one failure that defeats the whole point. A later `theme()` that styles `plot.caption` also overrides the type. A later `theme()` touching unrelated elements is harmless.
-- **Save with the `ragg` device**, or the bundled font is ignored and the footer renders in the device default:
-
-    ```r
-    ggsave("figures/fig1.png", fig, width = 5, height = 3.4,
-           dpi = 300, device = ragg::agg_png)
-    ```
-
-The footer is anchored to the image edge, not the plot panel, so it lands in the same position on every figure regardless of how wide the y-axis labels are. Do not reposition it per figure — uniformity across the series is the point.
-
-**No license string in the footer.** The license is declared once, in `snapshot_license`, and rendered in the sheet footer. Repeating it on the image guarantees the two eventually disagree.
-
-### 7.4 Two Background Variants
-
-Export every figure twice:
-
-| File | Background | Used for |
-|---|---|---|
-| `figures/fig1.png` | Bone `#EFEDE6` | The sheet — point `snapshot_feature` here |
-| `figures/fig1-web.png` | White | WordPress, slides, republication |
-
-`hflsnap::hfl_save_figure()` writes both from one call:
-
-```r
-hfl_save_figure(fig, "figures/fig1.png", width = 4.2, height = 5.6)
-```
-
-It sets each background, routes both through `ragg::agg_png` so the footer keeps its typeface, and creates the `figures/` directory if it is missing. It replaces a bare `ggsave()` call — do not use both.
-
-**Why two.** Neither background serves both contexts, and the mismatch is the same size in each direction: a white figure on the bone sheet reads as a panel pasted onto the page, and a bone figure in a white article reads as a warm rectangle. Choosing one background does not remove the seam, it just decides which audience sees it. Exporting twice costs one function call and removes the decision from the author entirely.
-
-Point `snapshot_feature` at the **bone** file. Upload the **white** file to WordPress, and send that one to anyone asking to republish the chart.
+- **Caption.** Every figure carries a complete caption in `snapshot_feature_caption` including: (1) what is shown, (2) data source, (3) sample definition, (4) year(s), (5) relevant notes. Let the caption do the labelling — drop title/subtitle/caption text from the ggplot itself, or they duplicate the caption beneath the plate.
 
 ---
 
@@ -565,10 +465,6 @@ Items 1, 2, and 5 directly affect audience reach. Items 3 and 4 affect the depth
 
 - [ ] `hflsnap::render_snapshot("your-file.Rmd")` completes without errors; PDF fills to the bottom of the page
 - [ ] `<your-file>-wordpress.html` produced successfully
-- [ ] Figure carries the HFL attribution footer via `hfl_watermark()`, placed after any complete theme (§7.3)
-- [ ] Figure exported with `hfl_save_figure()`; both `fig.png` (bone) and `fig-web.png` (white) exist (§7.4)
-- [ ] `snapshot_feature` points at the **bone** variant, not the web one
-- [ ] White variant uploaded to WordPress as the post image
 - [ ] Figure readable at 50% zoom
 - [ ] Bold used structurally (sub-headings) plus maximum one emphasis bold per 100 body words
 - [ ] No causal language unless research design warrants it
@@ -584,4 +480,4 @@ Items 1, 2, and 5 directly affect audience reach. Items 3 and 4 affect the depth
 
 ---
 
-_Household Finance Lab | Queens College, CUNY_ _Style Guide Version 3.5 — August 2026_
+_Household Finance Lab | Queens College, CUNY_ _Style Guide Version 3.4 — August 2026_

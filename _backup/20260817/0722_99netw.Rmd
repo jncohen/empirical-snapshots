@@ -8,25 +8,32 @@ snapshot_label: "Empirical Snapshot"
 snapshot_number: "001"
 snapshot_topic: "Net Worth"
 snapshot_util_left: "Queens College · CUNY"
+# snapshot_util_right: omitted -- setting it puts a bullet + label at the far
+# right of the utility bar (e.g. "· SCF 2022").
 
 snapshot_feature: "figures/0722_99th_networth.png"
 snapshot_feature_label: "Fig. 1"
-snapshot_feature_caption: "Net worth indexed to 2007 (=100). SCF 2007--2022."
+snapshot_feature_caption: "Net worth indexed to 2007 (=100). SCF 1989--2022."
+# snapshot_feature_height: "4.3in"   # default; lower it if the sheet spills
 
 snapshot_byline_name: "Joseph Nathan Cohen"
-snapshot_byline_title: "Associate Professor of Sociology"
-snapshot_byline_affiliation: "City University of New York, Queens College"
+snapshot_byline_title: "Associate Professor of Sociology: Economic Sociology, Organizations & Methodology"
 snapshot_byline_link: "jncohen.commons.gc.cuny.edu"
 snapshot_author_image: "images/JoeH1.png"
+# byline_affiliation / byline_bio omitted: the author box reads
+#   name / title / link. The utility bar already carries Queens College · CUNY.
 
 snapshot_switch_section: 3
-snapshot_license: "cc-by-4.0"
+snapshot_license: "cc-by-nc-sa-4.0"
 snapshot_data_note: "Data: Survey of Consumer Finances. See: <jncohen.commons.gc.cuny.edu/scf>"
 snapshot_code_url: "github.com/jncohen/0722_99netw.Rmd"
 
 abstract: |
   Both the median and 99th percentile lost wealth after the 2008 crisis. Both recovered, but the 99th percentile recovered faster.
 
+# fontset/accent are intentionally unset: the snapshot layout supplies the HFL
+# faces (Bricolage / Archivo / Spline Sans Mono) and defaults the accent to
+# vermilion E5402A. Setting accent here would override it (0066CC = blue).
 fontpath: fonts/
 numbersections: false
 doublespace: false
@@ -38,7 +45,7 @@ output:
     template: snapshots.tex
     latex_engine: xelatex
     keep_tex: false
-    keep_md: true       
+    keep_md: true        # .knit.md feeds the WordPress companion (see render-snapshot.R)
 ---
 
 ```{r setup, include = F}
@@ -46,12 +53,12 @@ output:
 rm(list=ls())
 gc()
 
+# No hfwgtex. The snapshot is standalone: snapshots.tex + fonts/ + snapshots.bib
+# all live in this folder and are the only things the layout needs.
 
 library(scf)
 library(scales)
 library(ggplot2)
-library(hflsnap)  
-library(ragg)      
 
 ```
 
@@ -233,6 +240,7 @@ fig <- ggplot(plot_df, aes(x = year, y = value)) +
     y = "Net Worth (2007 = 100)",
     color = NULL,
     linetype = NULL,
+    caption = "Data source: Federal Reserve Survey of Consumer Finances. License: CC BY-NC 4.0."
   ) +
   
   # Theme
@@ -269,19 +277,24 @@ fig <- ggplot(plot_df, aes(x = year, y = value)) +
     legend.margin = margin(t = 2),
     legend.box.margin = margin(t = 2),
     
+    # Caption / source note
+    plot.caption = element_text(
+      size = 8.5,
+      color = "gray35",
+      hjust = 0,
+      margin = margin(t = 10)
+    ),
+    
     # Remove ggplot grid because custom reference lines are used
     panel.grid = element_blank(),
     
-    # Backgrounds are set per variant by hfl_save_figure() -- do not
-    # hardcode them here, or the web export comes out the wrong colour.
+    # Clean panel
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
     
     # Better breathing room
     plot.margin = margin(t = 12, r = 14, b = 12, l = 12)
-  ) +
-
-  # HFL attribution footer -- fixed position, survives the figure being
-  # lifted out of the sheet. Must come after theme(): it sets plot.caption.
-  hfl_watermark()
+  )
 
 fig
 
@@ -290,15 +303,12 @@ fig_height <- 8
 fig_dpi    <- 180
 
 
-# Writes both variants:
-#   figures/0722_99th_networth.png      bone  -> snapshot_feature
-#   figures/0722_99th_networth-web.png  white -> WordPress / republication
-hfl_save_figure(
-  fig,
+ggsave(
   "figures/0722_99th_networth.png",
-  width  = fig_width,
+  fig,
+  width = fig_width,
   height = fig_height,
-  dpi    = fig_dpi
+  dpi = fig_dpi
 )
 
 ```

@@ -20,29 +20,26 @@ snapshot_feature_caption: "One brief line: measure, population, source, year."
 #
 # The plate is capped by height AND width, whichever binds first. Landscape
 # figures (~3:2) fill the column best; a 3:4 portrait renders at ~95% width.
-# Do NOT hardcode a background. Export both variants in one call:
-#   hflsnap::hfl_save_figure(fig, "figures/fig1.png", width = 4.2, height = 5.6)
-# -> figures/fig1.png     (bone)  point snapshot_feature here
-#    figures/fig1-web.png (white) upload this one to WordPress
-# Add hflsnap::hfl_watermark() as the LAST element of the ggplot chain, after
-# any complete theme. Let snapshot_feature_caption do the labelling -- drop
-# title/subtitle from the ggplot itself, or they duplicate the caption.
+# Match the chart background to the sheet so it doesn't read as a white panel:
+#   theme(plot.background = element_rect(fill = "#EFEDE6", colour = NA))
+# Let snapshot_feature_caption do the labelling -- drop title/subtitle/caption
+# from the ggplot itself, or they duplicate the caption beneath the plate.
 
 # --- Author box ---
 snapshot_byline_name: "Your Name"
 snapshot_byline_title: "Research Associate, HFL"
-snapshot_byline_affiliation: "City University of New York, Queens College"
 snapshot_byline_link: "hhfinance.commons.gc.cuny.edu"
+# snapshot_byline_affiliation: "Queens College, City Univ. of New York"
 # snapshot_byline_bio: "Researches household finances"
 # snapshot_author_image: "images/author.png"   # else a monogram disc is drawn
 # snapshot_author_initials: "YN"
 
 # --- Provenance (the footer) ---
 snapshot_switch_section: 3
-snapshot_license: "cc-by-4.0"
+snapshot_license: "cc-by-nc-sa-4.0"
 snapshot_data_note: "Data: Survey of Consumer Finances <hhfinance.commons.gc.cuny.edu/scf>"
 snapshot_code_url: "github.com/jncohen/your-file.Rmd"
-# snapshot_tiles: ["GitHub", "SCF", "CC BY"]
+# snapshot_tiles: ["GitHub", "SCF", "CC BY-NC-SA"]
 
 # --- Masthead + type scale (all optional; defaults hold one page) ---
 # snapshot_wordmark_size: "15pt"   # the HF square follows automatically

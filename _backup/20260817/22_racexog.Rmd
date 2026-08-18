@@ -15,7 +15,7 @@ snapshot_byline_bio: "Quantitative Sociologist: Organizations & Economy"
 snapshot_author_image: "images/JoeH1.png"
 
 snapshot_switch_section: 3
-snapshot_license: "cc-by-4.0"
+snapshot_license: "cc-by-nc-sa-4.0"
 snapshot_data_note: "Data: Survey of Consumer Finances. \nFor info: jncohen.commons.gc.cuny.edu/scf"
 snapshot_code_url: "github.com/jncohen/8922_racexog.Rmd"
 

@@ -1,2 +1,5 @@
+export(hfl_font_mono)
+export(hfl_save_figure)
 export(hfl_use)
+export(hfl_watermark)
 export(render_snapshot)
