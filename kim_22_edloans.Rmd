@@ -1,0 +1,230 @@
+---
+title: "Mean Student Loans to White Americans Up, Black and Hispanic Americans Down: 2010 vs. 2022"
+author: "Donghwan Kim"
+date: "September 19, 2026"
+
+snapshot: true
+snapshot_label: "Empirical Snapshot"
+snapshot_number: "002"
+snapshot_topic: "Debt"
+snapshot_util_left: "Queens College · CUNY"
+
+snapshot_feature: "figures/loan_debt_comparison_2010_2022.png"
+snapshot_feature_label: "Fig. 1"
+snapshot_feature_caption: "Average Student Loan Debt by Race: 2010 vs 2022."
+
+snapshot_byline_name: "Donghwan Kim"
+snapshot_byline_title: "Master's Student, Data Analytics Program"
+snapshot_byline_affiliation: "City University of New York, Queens College"
+snapshot_author_image: "images/DongH1.png"
+
+snapshot_switch_section: 3
+snapshot_license: "cc-by-4.0"
+snapshot_data_note: "Data: Survey of Consumer Finances. See: <jncohen.commons.gc.cuny.edu/scf>"
+snapshot_code_url: "https://github.com/jncohen/empirical-snapshots/blob/main/kim_22_edloans.Rmd"
+
+abstract: |
+  Averages diverged from 2010 to 2022, but typical balances are similar. A noticeable difference in large loans.
+
+fontpath: fonts/
+numbersections: false
+doublespace: false
+linenumbers: false
+maincolumns: 1
+
+output:
+  rmarkdown::pdf_document:
+    template: snapshots.tex
+    latex_engine: xelatex
+    keep_tex: false
+    keep_md: true       
+---
+
+```{r setup, include = F}
+
+library(scf)
+library(scales)
+library(tidyverse)
+
+```
+
+```{r Data, include = F}
+#Load the Data
+scf_dir <- "../../../Data/scf"
+
+scf2022 <- scf_load(2022, data_directory = scf_dir)
+scf2010 <- scf_load(2010, data_directory = scf_dir)
+
+# Load and Wrangle Sets
+scf2010_y <- scf_subset(scf2010, age < 35)
+scf2022_y <- scf_subset(scf2022, age < 35)
+
+# Subset to well-represented races
+scf2010_y <- scf_subset(scf2010_y, x6809 %in% c(1, 2, 3))
+scf2010_y <- scf_update(scf2010_y, race1 = factor(x6809, levels = c(1, 2, 3),
+                                                  labels = c("White", "Black", "Hispanic")))
+
+scf2022_y <- scf_subset(scf2022_y, x6809 %in% c(1, 2, 3))
+scf2022_y <- scf_update(scf2022_y, race1 = factor(x6809, levels = c(1, 2, 3),
+                                                  labels = c("White", "Black", "Hispanic")))
+
+# Ed debt instance
+scf2010_y <- scf_update(scf2010_y, eddebt_any = edn_inst > 0)
+scf2022_y <- scf_update(scf2022_y, eddebt_any = edn_inst > 0)
+
+# Ed debt subset
+scf2010_yd <- scf_subset(scf2010_y, edn_inst > 0)
+scf2022_yd <- scf_subset(scf2022_y, edn_inst > 0)
+
+
+```
+
+```{r lede calcs, include = F}
+
+mean2010 <- scf_mean(scf2010_yd, ~edn_inst, by = ~race1)
+mean2022 <- scf_mean(scf2022_yd, ~edn_inst, by = ~race1)
+
+prop2010 <- scf_freq(scf2010_y, ~eddebt_any, by = ~race1)
+prop2022 <- scf_freq(scf2022_y, ~eddebt_any, by = ~race1)
+
+w10 <- mean2010$results$estimate[mean2010$results$group == "White"]
+w22 <- mean2022$results$estimate[mean2022$results$group == "White"]
+b10 <- mean2010$results$estimate[mean2010$results$group == "Black"]
+b22 <- mean2022$results$estimate[mean2022$results$group == "Black"]
+h10 <- mean2010$results$estimate[mean2010$results$group == "Hispanic"]
+h22 <- mean2022$results$estimate[mean2022$results$group == "Hispanic"]
+
+w_chg <- percent(abs(w22 / w10 - 1), accuracy = 1)
+b_chg <- percent(abs(b22 / b10 - 1), accuracy = 1)
+h_chg <- percent(abs(h22 / h10 - 1), accuracy = 1)
+
+b_shr10 <- round(prop2010$results$proportion[prop2010$results$group == "Black" &
+                                             prop2010$results$category == "TRUE"], 0)
+b_shr22 <- round(prop2022$results$proportion[prop2022$results$group == "Black" &
+                                             prop2022$results$category == "TRUE"], 0)
+
+wb_ratio <- round(w22 / b22, 1)
+
+# Medians by race
+median2022 <- scf_median(scf2022_yd, ~edn_inst, by = ~race1)
+w_med22 <- median2022$results$estimate[median2022$results$group == "White"]
+b_med22 <- median2022$results$estimate[median2022$results$group == "Black"]
+h_med22 <- median2022$results$estimate[median2022$results$group == "Hispanic"]
+
+# Borrowers owing $100K+ in 2022
+scf2022_yd <- scf_update(scf2022_yd, bigloans = edn_inst >= 100000)
+bloans2022 <- scf_freq(scf2022_yd, ~bigloans, by = ~race1)
+w_big22 <- bloans2022$results$proportion[bloans2022$results$group == "White" &
+                                         bloans2022$results$category == "TRUE"]
+b_big22 <- bloans2022$results$proportion[bloans2022$results$group == "Black" &
+                                         bloans2022$results$category == "TRUE"]
+h_big22 <- bloans2022$results$proportion[bloans2022$results$group == "Hispanic" &
+                                         bloans2022$results$category == "TRUE"]
+
+# 90th percentile by race, 2022
+p90_22 <- scf_percentile(scf2022_yd, ~edn_inst, q = 0.90, by = ~race1)
+w90 <- p90_22$results$estimate[p90_22$results$group == "White"]
+b90 <- p90_22$results$estimate[p90_22$results$group == "Black"]
+h90 <- p90_22$results$estimate[p90_22$results$group == "Hispanic"]
+
+# Borrowers owing $100K+ in 2010
+scf2010_yd <- scf_update(scf2010_yd, bigloans = edn_inst >= 100000)
+bloans2010 <- scf_freq(scf2010_yd, ~bigloans, by = ~race1)
+w_big10 <- bloans2010$results$proportion[bloans2010$results$group == "White" &
+                                         bloans2010$results$category == "TRUE"]
+b_big10 <- bloans2010$results$proportion[bloans2010$results$group == "Black" &
+                                         bloans2010$results$category == "TRUE"]
+h_big10 <- bloans2010$results$proportion[bloans2010$results$group == "Hispanic" &
+                                         bloans2010$results$category == "TRUE"]
+
+```
+
+Between 2010 and 2022, average student loan balances appeared to have changed across under-35 White, Black, and Hispanic households. In 2022, young White households with student debt carried an average of `r dollar(round(w22,0))`, compared to `r dollar(round(b22,0))` for similar Black and `r dollar(round(h22,0))` for similar Hispanic households. In 2010, those averages were `r dollar(round(w10,0))`, `r dollar(round(b10,0))`, and `r dollar(round(h10,0))`, respectively, in 2022 dollars. White student debt balances appear to have grown in real dollar terms, while those of their Black and Hispanic counterparts appear to have fallen.
+
+# Context
+Student loan debt is a concern for both household finances and higher education. Rising tuition costs and limited family economic resources have led many young adults to rely on borrowing to fund their education. There are reasons to believe that student debt promotes economic mobility by increasing educational attainment, but also hinders it by reducing wealth accumulation.  
+  
+Similar discussions have also focused on racial disparities. Previous research has examined differences in borrowing and repayment rates across racial groups, raising questions about whether the costs and benefits of higher education are distributed equally. This analysis concerns how student debt differs across racial groups, and how these patterns changed between 2010 and 2022 among under-35 households. We ask whether student debt patterns are experienced similarly across groups or whether they reflect disparities that may contribute to broader economic inequality.
+
+```{r figure, include = F}
+
+##Creating the Bars
+
+df2022 <- data.frame(
+  group    = c("White", "Black", "Hispanic"),
+  estimate = round(mean2022$results$estimate, 0),
+  year = 2022
+)
+
+df2010 <- data.frame(
+  group    = c("White", "Black", "Hispanic"),
+  estimate = round(mean2010$results$estimate, 0),
+  year = 2010
+)
+
+loan_data <- bind_rows(df2010, df2022)
+
+loan_data$group <- factor(loan_data$group, levels = c("White", "Black", "Hispanic"))
+loan_data$year <- factor(loan_data$year, levels = c("2010", "2022"))
+
+```
+
+# Findings
+
+```{r findings, include = F}
+
+p <- ggplot(loan_data, aes(x = group, y = estimate, fill = year)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  geom_text(aes(label = dollar(estimate, accuracy = 1)),
+            position = position_dodge(width = 0.7),
+            angle = 90, hjust = -0.1, vjust = 0.5,
+            size = 3.6, color = "#1E293B", family = "sans") +
+  scale_fill_manual(values = c("2010" = "#4A90C4", "2022" = "#1E3A5F")) +
+  scale_y_continuous(labels = dollar_format(),
+                     limits = c(0, NA),
+                     expand = expansion(mult = c(0, 0.20))) +
+  labs(title    = "Average Student Loan Debt, Under-35s:\n2010 vs. 2022",
+       subtitle = "Households with student debt only. Figures in 2022 dollars.",
+       x = NULL, y = NULL, fill = NULL) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title          = element_text(face = "bold", size = 18, lineheight = 1.05,
+                                           hjust = 0.5, color = "#1A1A2E",
+                                           margin = margin(b = 4)),
+        plot.title.position = "plot",
+        plot.subtitle       = element_text(size = 11, hjust = 0.5, color = "#6B7280",
+                                           face = "italic", margin = margin(b = 12)),
+        legend.position     = "top",
+        legend.text         = element_text(size = 12, color = "#374151"),
+        axis.text.x         = element_text(color = "#374151", size = 11),
+        axis.text.y         = element_text(color = "#6B7280", size = 11),
+        panel.grid.major.x  = element_blank(),
+        panel.grid.minor    = element_blank(),
+        panel.grid.major.y  = element_line(color = "#D3CFC3", linewidth = 0.4),
+        plot.background     = element_rect(fill = "white", colour = NA),
+        panel.background    = element_rect(fill = "white", colour = NA),
+        legend.background   = element_rect(fill = "white", colour = NA),
+        plot.margin         = margin(t = 10, r = 14, b = 10, l = 12))
+
+
+ggsave("figures/loan_debt_comparison_2010_2022.png",
+       p, width = 6, height = 8, dpi = 180, bg = "white")
+
+
+# Transparent copy: the theme's white backgrounds must be cleared as well
+p_t <- p + theme(plot.background   = element_rect(fill = "transparent", colour = NA),
+                 panel.background  = element_rect(fill = "transparent", colour = NA),
+                 legend.background = element_rect(fill = "transparent", colour = NA))
+
+ggsave("figures/loan_debt_comparison_2010_2022_t.png",
+       p_t, width = 6, height = 8, dpi = 180, bg = "transparent")
+
+
+```
+
+The figure to the right depicts average student loan balances by race. Due to the relatively low absolute number of under-35 Black and Hispanic households in the survey, it is possible that our results are being influenced by sampling variation. These results offer food for thought, but aren't definitive.
+
+**Racial Differences in Wider Distribution.** In 2022, the median debt owed by White (`r dollar(round(w_med22))`), Black (`r dollar(round(b_med22))`), and Hispanic (`r dollar(round(h_med22))`)  borrowers was comparable. They diverged by the 90th percentile: White (`r dollar(round(w90,0))`), Black (`r dollar(round(b90,0))`), and Hispanic (`r dollar(round(h90,0))`) borrowers. The incidence of large balances (\$100,000+) is far higher among White borrowers (`r round(w_big22, 1)`%) than Black (`r round(b_big22, 1)`%) or Hispanic (`r round(h_big22, 1)`%) borrowers. In 2010, these figures were `r round(w_big10, 1)`%, `r round(b_big10, 1)`%, and `r round(h_big10, 1)`%, respectively. 
+
+# Implications 
+
+Racial differences in student debt appeared to change between 2010 and 2022. To the extent that the typical person's student loans are a problem, there do not appear to be large race-based differences. To the extent that very large student loans are a problem, it appears to have worsened, with the change disproportionately affecting White borrowers.
