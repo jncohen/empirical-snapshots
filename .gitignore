@@ -4,11 +4,9 @@
 .RData
 .Ruserdata
 scf-snapshots.Rproj
-
 # --- Data ------------------------------------------------------------
 # SCF .rds files live outside the repo: Google Drive/Documents/Data/scf
 *.rds
-
 # --- Generated output ------------------------------------------------
 *.pdf
 *.html
@@ -17,12 +15,10 @@ scf-snapshots.Rproj
 *.out
 *.knit.md
 *.utf8.md
-
 # knitr leaves a .tex behind when keep_tex: true -- ignore those, but the
 # template itself is SOURCE and must be tracked.
 *.tex
 !snapshots.tex
-
 # --- Tracked on purpose ----------------------------------------------
 # The snapshot layout is standalone: it needs the HFL faces and the CSL
 # alongside snapshots.tex, so they belong in the repo. The fonts are
@@ -34,6 +30,6 @@ scf-snapshots.Rproj
 !default.csl
 !snapshots.bib
 !render-snapshot.R
-
 # Reference sheet + its source, kept so the design has a known-good baseline
 !snapshot-hfl-sample.md
+README.md.bak
