@@ -136,22 +136,16 @@ Either way, the resulting `.Rmd` is a plain `rmarkdown::pdf_document` — `hflsn
 
 ### 6.2 One-Time Setup
 
-`hflsnap` lives in the `hflsnap/` subdirectory of this repo (`github.com/jncohen/empirical-snapshots`), not as its own repo. Install it from there:
+`hflsnap` lives in its own private repository, `github.com/jncohen/hflsnap`. You need read access to it and a GitHub token that R can find (`usethis::create_github_token()`, then `gitcreds::gitcreds_set()`). Then:
 
 ```r
-install.packages("devtools")     # if not already installed
-devtools::install_github("jncohen/empirical-snapshots", subdir = "hflsnap")
+install.packages("remotes")     # if not already installed
+remotes::install_github("jncohen/hflsnap")
 ```
 
-**Updating.** Re-running the same `install_github()` call always pulls whatever is on `main` — there's no version to bump on your end. If you want to pin to a specific commit or tag (e.g. after a breaking change to `hfl_use()`), install with `ref = "<commit-sha-or-tag>"` instead.
+**Updating.** Re-running the same `install_github()` call pulls whatever is on `main`. To pin a specific commit or tag (e.g. after a breaking change to `hfl_use()`), add `ref = "<commit-sha-or-tag>"`.
 
-**Offline / no GitHub access:** install from the tarball checked into the repo root instead:
-
-```r
-devtools::install_local("hflsnap_0.2.0.tar.gz")
-```
-
-This is a point-in-time snapshot of the package, not a substitute for pulling from GitHub — it won't include changes made after that tarball was committed. **Rebuild it (`R CMD build hflsnap`) whenever you change anything under `hflsnap/`**, or the offline path silently ships an older package than the source tree.
+**Offline / no GitHub access:** build a tarball from a clone of that repo (`R CMD build hflsnap`) and install it with `remotes::install_local("hflsnap_<version>.tar.gz")`. The package source no longer lives in this repo; change it in `jncohen/hflsnap`.
 
 You also need:
 - **Pandoc**, bundled with RStudio.
