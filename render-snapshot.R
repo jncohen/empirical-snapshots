@@ -35,6 +35,9 @@ render_snapshot <- function(input,
   pdf_out <- rmarkdown::render(
     input         = input,
     output_format = "all",
+    # A fresh environment, not this function's frame: a document that runs
+    # rm(list = ls()) would otherwise delete this function's own variables.
+    envir         = new.env(parent = globalenv()),
     quiet         = quiet
   )
 
